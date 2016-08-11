@@ -1,7 +1,15 @@
 # Introduction
 
-This document specifies the implementation of the *Memory Access
-Module*.
+This document specifies the implementation of the *CPU Debug Unit*. The module contains some Event Monitors, Snapshot Collectors, one Snapshot Data Correlation Module (SDCM) and one Packetizer.
+
+The event monitor detects certain events and informs the SDCM about their occurances. At the moment two different event monitors are included: the Program Counter Monitor and the Function Return Monitor. The Program Counter Monitor compares the current value of the Program Counter with pre-defined events. If there is a match the module informs the SDCM.
+The Function Return Monitor detects the return of a certain function by means of the program counter and the return address which is stored in the CPU registers when the function is called.
+
+The SDCM gets informed by the event monitors when an event occurs. Depending on the event configuration the SDCM is responsible to inform the Snapshot collectors in order to collect the data which is correlated with the event.
+
+The packetizer generates trace packets which contains the Event-ID, a timestamp and the requestet datas from the Snapshot Collectors. Additionally, the packetizer is the interface to the Debug Co-Processor and the Host. It is responsible to forward the trace packets and it receives the configuration of the events. 
+
+
 
 ## License
 
@@ -20,29 +28,27 @@ the same license as the original.
 
 ## Authors
 
-Stefan Wallentowitz
-
-Fill in your name here!
+Tim Fritzmann, Markus Göhrle
 
 # System Interface
 
-There is a generic interface between the MAM and the system:
+There is a generic interface between the CPU Debug Unit and the system:
 
- Signal        | Direction   | Description
- ------------  | ----------- | -----------
- `req_valid`   | MAM->System | Start a new memory access request
- `req_ready`   | MAM->System | Acknowledge the new memory access request
- `req_rw`      | MAM->System | `0`: Read, `1`: Write
- `req_addr`    | MAM->System | Request base address
- `req_burst`   | MAM->System | `0` for single beat access, `1` for incremental burst
- `req_size`    | MAM->System | Burst size in number of words
- `write_valid` | MAM->System | Next write data is valid
- `write_data`  | MAM->System | Write data
- `write_strb`  | MAM->System | Byte strobe if `req_burst==0`
- `write_ready` | System->MAM | Acknowledge this data item
- `read_valid`  | System->MAM | Next read data is valid
- `read_data`   | System->MAM | Read data
- `read_ready`  | MAM->System | Acknowledge this data item
+ Signal             | Direction              | Description
+ -------------------| -----------------------| -----------
+ `clk`              | System->CPU Debug Unit | System CPU Clock
+ `reset`            | System->CPU Debug Unit | System Reset
+ `memaddr_val`      | System->CPU Debug Unit | Memory Interface
+ `sram_ce`          | System->CPU Debug Unit | Memory Inferface, Chip Enable
+ `sram_we`          | System->CPU Debug Unit | Memory Interface, Write Enable
+ `time_global`      | System->CPU Debug Unit | Interface to the global timestamp
+ `traceport_flat`   | System->CPU Debug Unit | Execution traceport in a single signal
+ `dbgnoc_in_flit`   | System->CPU Debug Unit | Debug NoC Interface, input data
+ `dbgnoc_in_valid`  | System->CPU Debug Unit | Debug NoC Interface, input valid
+ `dbgnoc_out_ready` | System->CPU Debug Unit | Debug NoC Interface, output ready
+ `dbgnoc_out_flit`  | CPU Debug Unit->System | Debug NoC Interface, output data
+ `dbgnoc_out_valid` | CPU Debug Unit->System | Debug NoC Interface, output valid
+ `dbgnoc_in_ready`  | CPU Debug Unit->System | Debug NoC Interface, input ready
 
 # Memory Map
 
@@ -52,102 +58,48 @@ There is a generic interface between the MAM and the system:
  `0x201`       | Data width in Byte
  `0x202`       | `1` if unaligned accesses are allowed, `0` otherwise
 
-# Debug Packets
+# Debug Content
 
-The host sends debug packets of the `PLAIN` type, which means the
-content is module-specific. The payload therefore contains the memory
-access sequence.
+Before an event can be triggered the event has to be described.
+This can be done with the Debug Content Registers.
+The Content of the registers are described below:
 
+ Index   | Content
+ ------- | -------
+ 0       | `MODULE_TYPE	MODULE_VERSION`
+ 1       | `CORE_ID`
+ 2       | `ON/OFF`
+ 3       | `PC Config Event_1 1/3`
+ 4       | `PC Config Event_1 2/3`
+ 5       | `PC Config Event_1 3/3`
+ 5       | `PC Config Event_2 1/3`
+ ..      | `..`
+         | `Fcn Return Config Event_1 1/3`
+         | `..`
+
+
+# Trace Packets
+
+The trace packets were sent over the Debug NoC to the host.
 The sequence starts with a common header:
 
  Payload | Content
  ------- | -------
  0       | `[15]`: R/W, `[14]`: Single/Chunk, `[13:0]`: Strobe/Chunk size
- 1       | `Address[WIDTH-1:WIDTH-16]`
+ 1       | `EVENT ID`
+ 2       | `TIMESTAMP_LSB`
+ 3       | `TIMESTAMP_MSB`
+ 4       | `GPR DATA LSB`
+ 5       | `GPR DATA MSB`
  ..      | ..
+ N-2     | `STACKARG DATA LSB`
+ N-1     | `STACKARG DATA MSB`
  N       | `Address[15:0]`
-
-After this sequence the data exchange starts as described below.
-
-A chunk is an incremental burst access starting from the base address.
-
-The bits in the first transfer are defined as:
-
- Bit(s) | Content
- ------ | -------
- `15`   | R: `0`, W: `1`
- `14`   | Single word access: `0`, Chunk access: `1`
- `13:0` | Chunk: the burst size in number of words,
- `13:0` | Single: byte strobe
-
-TODO: Byte strobe definition
 
 Following this setup information, the actual transfer takes place be
 sending the data in a stream, meaning the debug packets are maximally
 filled and the data spans multiple packets. It is only possible to
 have one read or one write access at a time.
-
-## Write Sequence
-
-The write sequence is the setup header as described before, followed
-by the data ordered from MSB to LSB.
-
-An examplary write sequence of a chunk of four data items with data
-width 64-bit and address width 32-bit is the sequence:
-
-    0xc004=1100 0000 0000 0100
-    Addr[31:16]
-	Addr[15:0]
-	D0[63:48]
-	D0[47:32]
-	D0[31:16]
-	D0[15:0]
-	D1[63:48]
-	D1[47:32]
-	D1[31:16]
-	D1[15:0]
-	D2[63:48]
-	D2[47:32]
-	D2[31:16]
-	D2[15:0]
-	D3[63:48]
-	D3[47:32]
-	D3[31:16]
-	D3[15:0]
-
-This sequence will write `D0` to `Addr`, `D1` to `Addr+1`, `D2` to
-`Addr+2` and `D3` to `Addr+3`.
-
-If the maximum packet size in the debug interconnect is 8, this is the
-packet sequence with minimum number of packets:
-
-	(dest=MAM_ID)
-	(type=PLAIN,src=0)
-	0xc004
-	Addr[31:16]
-	Addr[15:0]
-	D0[63:48]
-	D0[47:32]
-	D0[31:16]
-
-	(dest=MAM_ID)
-	(type=PLAIN,src=0)
-	D0[15:0]
-	D1[63:48]
-	D1[47:32]
-	D1[31:16]
-	D1[15:0]
-	D2[63:48]
-
-	(dest=MAM_ID)
-	(type=PLAIN,src=0)
-	D2[47:32]
-	D2[31:16]
-	D2[15:0]
-	D3[63:48]
-	D3[47:32]
-	D3[31:16]
-
     (dest=MAM_ID)
 	(type=PLAIN,src=0)
 	D3[15:0]
