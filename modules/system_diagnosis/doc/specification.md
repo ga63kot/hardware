@@ -42,9 +42,7 @@ There is a generic interface between the CPU Debug Unit and the system:
  `sram_ce`          | System->CPU Debug Unit | Memory Inferface, chip enable
  `sram_we`          | System->CPU Debug Unit | Memory Interface, write enable
  `time_global`      | System->CPU Debug Unit | Interface to the global timestamp
- `traceport_flat`   | System->CPU Debug Unit | Execution traceport in a single signal,
-		    |   		     | pc_val, pc_enable, wb_enable, wb_reg, 
-		    |                        | wb_data, trace_isn, trace_enable
+ `traceport_flat`   | System->CPU Debug Unit | Execution traceport in a single signal<br>pc_val, pc_enable, wb_enable, wb_reg,<br>wb_data, trace_isn, trace_enable
  `dbgnoc_in_flit`   | System->CPU Debug Unit | Debug NoC Interface, input data
  `dbgnoc_in_valid`  | System->CPU Debug Unit | Debug NoC Interface, input valid
  `dbgnoc_out_ready` | System->CPU Debug Unit | Debug NoC Interface, output ready
