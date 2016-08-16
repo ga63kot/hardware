@@ -234,7 +234,7 @@ As example the configuration of the Program Counter will be illustrated.
   </tr>
 </table>
 
-The General Purpose Registers can be selected with the 32 bit vector. Each bit indicates the selection of one register. If bit 'n' is set to logic one the register Rn gets selected.
+The General Purpose Registers can be selected with a 32 bit vector. Each bit indicates the selection of one register. If bit 'n' is set to logic one the register Rn gets selected.
 With the six bits for the stack arguments the number of word lines can be chosen.
 
 # Trace Packets
@@ -242,15 +242,15 @@ With the six bits for the stack arguments the number of word lines can be chosen
 The trace packets were sent over the Debug NoC to the host.
 The sequence starts with a common header and ends with the tail:
 
- Type     | Content       						      | Remark
- -------  | -------							      | ------
- Header   | `[15]`: R/W, `[14]`: Single/Chunk, `[13:0]`: Strobe/Chunk size    |
- Content  | `EVENT ID`							      | Bit 0-5 Event-ID
- Content  | `TIMESTAMP_LSB`						      |
- Content  | `TIMESTAMP_MSB`						      |
- Content  | `GPR DATA LSB`						      |
- Content  | `GPR DATA MSB`						      |
- ..       | ..								      |
- Content  | `STACKARG DATA LSB`						      |
- Content  | `STACKARG DATA MSB`						      |
- Tail     | `Address[15:0]`						      |
+ Type     | Content
+ -------  | -------
+ Header   | `[15]`: R/W, `[14]`: Single/Chunk, `[13:0]`: Strobe/Chunk size
+ Content  | `[15:6]`: undefined, `[5:0]`: EVENT ID
+ Content  | `[15:0]`: TIMESTAMP_LSB
+ Content  | `[15:0]`: TIMESTAMP_MSB
+ Content  | `[15:0]`: GPR DATA LSB
+ Content  | `[15:0]`: GPR DATA MSB
+ ..       | ..
+ Content  | `[15:0]`:STACKARG DATA LSB
+ Content  | `[15:0]`:STACKARG DATA MSB
+ Tail     | `[15:0]`: Address
