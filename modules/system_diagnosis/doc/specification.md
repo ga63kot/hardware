@@ -2,8 +2,8 @@
 
 This document specifies the implementation of the *CPU Debug Unit*. The CPU Debug Unit contains some Event Monitors, Snapshot Collectors, one Snapshot Data Correlation Module (SDCM) and one Packetizer.
 
-The event monitor detects certain events and informs the SDCM about their occurrences. At the moment two different event monitors are implemented: the Program Counter Monitor and the Function Return Monitor. The Program Counter Monitor compares the current value of the Program Counter with pre-defined events. If there is a match the module informs the SDCM.
-The Function Return Monitor detects the return of a certain function by means of the program counter and the return address which is stored in the CPU registers when the function is called.
+The event monitor detects certain events and informs the SDCM about their occurrences. At the moment three different event monitors are implemented: the Program Counter Monitor, the Function Return Monitor and the Memory Address Monitor. The Program Counter Monitor compares the current value of the Program Counter with pre-defined events. If there is a match the module informs the SDCM.
+The Function Return Monitor detects the return of a certain function by means of the program counter and the return address which is stored in the CPU registers when the function is called. The Memory Address Monitor observes the memory writes of the CPU and compares it to the preconfigured memory address singal values. Like at the other monitors this module forwards an event signal in case of a match.
 
 When an event occurs the SDCM gets informed by the event monitors. Depending on the event configuration the SDCM is responsible to trigger the Snapshot Collectors in order to collect the requested data.
 
@@ -36,20 +36,24 @@ There is a generic interface between the CPU Debug Unit and the system:
 
  Signal             | Direction              | Description
  -------------------| -----------------------| -----------
- `clk`              | System->CPU Debug Unit | System CPU Clock
- `reset`            | System->CPU Debug Unit | System Reset
- `memaddr_val`      | System->CPU Debug Unit | Memory Interface, address valid
- `sram_ce`          | System->CPU Debug Unit | Memory Inferface, chip enable
- `sram_we`          | System->CPU Debug Unit | Memory Interface, write enable
- `time_global`      | System->CPU Debug Unit | Interface to the global timestamp
- `traceport_flat`   | System->CPU Debug Unit | Execution traceport in a single signal<br>pc_val, pc_enable, wb_enable, wb_reg,<br>wb_data, trace_isn, trace_enable
- `dbgnoc_in_flit`   | System->CPU Debug Unit | Debug NoC Interface, input data
- `dbgnoc_in_valid`  | System->CPU Debug Unit | Debug NoC Interface, input valid
- `dbgnoc_out_ready` | System->CPU Debug Unit | Debug NoC Interface, output ready
- `dbgnoc_out_flit`  | CPU Debug Unit->System | Debug NoC Interface, output data
- `dbgnoc_out_valid` | CPU Debug Unit->System | Debug NoC Interface, output valid
- `dbgnoc_in_ready`  | CPU Debug Unit->System | Debug NoC Interface, input ready
+ `memaddr_val`      | System->CPU Debug Unit | Memory Interface (of Memory Address Monitor), address valid
+ `sram_ce`          | System->CPU Debug Unit | Memory Inferface (of Memory Address Monitor), chip enable
+ `sram_we`          | System->CPU Debug Unit | Memory Interface (of Memory Address Monitor), write enable
+ `pc_val`	    | System->CPU Debug Unit | Program Counter Interface (of Program Counter Monitor), Program Counter valid
+ `pc_enable`        | System->CPU Debug Unit | Program Counter Interface (of Program Counter Monitor), Program Counter enable
+ `wb_enable`        | System->CPU Debug Unit | Writeback Register Interface (of Function Return Monitor), writeback enable
+ `wb_reg`           | System->CPU Debug Unit | Writeback Register Interface (of Function Return Monitor), writeback register
+ `wb_data`          | System->CPU Debug Unit | Writeback Register Interface (of Function Return Monitor), writeback data
+ `trace_insn`       | System->CPU Debug Unit | Instruction Trace Interface (of the Stack), trace insn
+ `trace_enable`     | System->CPU Debug Unit | Instruction Trace Interface (of the Stack), trace enable
 
+# Memory Map
+
+ Address Range | Description
+ ------------- | -----------
+ `0x200`       | Address width in Byte
+ `0x201`       | Data width in Byte
+ `0x202`       | `1` if unaligned accesses are allowed, `0` otherwise
 
 # Debug Content
 
@@ -59,13 +63,11 @@ The structure of the registers is described below:
 
  Index   | Content                          | Remark
  ------- | -------                          | ------
- 0x00    | `MODULE_TYPE	MODULE_VERSION`     | Bit 0-7 MODULE_VERSION, Bit 8-15 MODULE_TYPE
- 0x01    | `CORE_ID`			    |
- 0x02    | `ON/OFF`			    | Bit 0 is used for ON/OFF
- 0x03    | `PC Config Event_1 1/3`	    |
- 0x04    | `PC Config Event_1 2/3`	    |
- 0x05    | `PC Config Event_1 3/3`	    |
- 0x06    | `PC Config Event_2 1/3`	    |
+ 0x210   | `ON/OFF`			    | Bit 0 is used for ON/OFF
+ 0x211   | `PC Config Event_1 1/3`	    |
+ 0x212   | `PC Config Event_1 2/3`	    | Description......
+ 0x213   | `PC Config Event_1 3/3`	    |
+ 0x214   | `PC Config Event_2 1/3`	    |
  ..      | `..`				    |
          | `Fcn Return Config Event_1 1/3`  |
          | `..`				    |
