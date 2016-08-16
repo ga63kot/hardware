@@ -3,7 +3,7 @@
 This document specifies the implementation of the *CPU Debug Unit*. The CPU Debug Unit contains some Event Monitors, Snapshot Collectors, one Snapshot Data Correlation Module (SDCM) and one Packetizer.
 
 The event monitor detects certain events and informs the SDCM about their occurrences. At the moment three different event monitors are implemented: the Program Counter Monitor, the Function Return Monitor and the Memory Address Monitor. The Program Counter Monitor compares the current value of the Program Counter with pre-defined events. If there is a match the module informs the SDCM.
-The Function Return Monitor detects the return of a certain function by means of the program counter and the return address which is stored in the CPU registers when the function is called. The Memory Address Monitor observes the memory writes of the CPU and compares it to the preconfigured memory address singal values. Like at the other monitors this module forwards an event signal in case of a match.
+The Function Return Monitor detects the return of a certain function by means of the program counter and the return address which is stored in the CPU registers when the function is called. The Memory Address Monitor observes the memory writes of the CPU and compares it to the preconfigured memory address singal values. Similar to the other monitors this module forwards an event signal in case of a match.
 
 When an event occurs the SDCM gets informed by the event monitors. Depending on the event configuration the SDCM is responsible to trigger the Snapshot Collectors in order to collect the requested data.
 
@@ -58,20 +58,58 @@ There is a generic interface between the CPU Debug Unit and the system:
 # Debug Content
 
 Before an event can be triggered the event has to be described.
-This can be done with the Debug Content Registers.
+This can be done with the Configuration Registers.
 The structure of the registers is described below:
 
  Index   | Content                          | Remark
  ------- | -------                          | ------
  0x210   | `ON/OFF`			    | Bit 0 is used for ON/OFF
- 0x211   | `PC Config Event_1 1/3`	    |
- 0x212   | `PC Config Event_1 2/3`	    | Description......
- 0x213   | `PC Config Event_1 3/3`	    |
- 0x214   | `PC Config Event_2 1/3`	    |
+ 0x211   | `PC Config Event_1 1/3`	    | Monitor Configuration Programm Counter Event 1 Part 1
+ 0x212   | `PC Config Event_1 2/3`	    | Monitor Configuration Programm Counter Event 1 Part 2
+ 0x213   | `PC Config Event_1 3/3`	    | Monitor Configuration Programm Counter Event 1 Part 3
+ 0x214   | `PC Config Event_2 1/3`	    | Monitor Configuration Programm Counter Event 2 Part 1
  ..      | `..`				    |
-         | `Fcn Return Config Event_1 1/3`  |
+         | `Fcn Return Config Event_1 1/3`  | Monitor Configuration Function Return Event 1 Part 1
          | `..`				    |
+	 | `SDC Module LUT_element_1 1/3`   | SDC Module Configuration Program Counter Event 1 Part 1
+	 | `..`				    |
 
+Three flits will be used for one configuration entry. The structure depends on the implemented event monitors and the maximum amount of events per monitor. Firstly, all event configurations for the event monitors have to be stored. Afterwards the SDCM configuration of the events have to be described. The SDCM configuration will be used to inform the snapshot collectors which data they should be selected in case the event occurs.
+
+The following part shows how such an configuration entry looks in detail.
+
+*Event Monitor Configuration*:
+All implemented Event Monitor Configurations have the same structure.
+As example the configuration of the Program Counter will be shown.
+
+   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0
+ -------------------------------------------------------------------------------------------------------------
+ Program Counter Value LSB
+
+   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0
+ -------------------------------------------------------------------------------------------------------------
+ Program Counter Value MSB
+
+   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0
+ -------------------------------------------------------------------------------------------------------------
+ valid | undefined                                                    | Event ID
+
+*SDCM Configuration*:
+
+   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0
+ -------------------------------------------------------------------------------------------------------------
+ GPR selection vector (LSB)
+
+   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0
+ -------------------------------------------------------------------------------------------------------------
+ GPR selection vector (MSB)
+
+   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0
+ -------------------------------------------------------------------------------------------------------------
+ valid | undefined          | stack arguments                         | Event ID
+
+The General Purpose Registers can be selected with the 32 bit vector. Each bit indicates the selection of one register. If bit 'n' is set to 1 then Rn gets selected.
+With the six bits for the stack arguments the number of word lines can be selected.
 
 # Trace Packets
 
