@@ -82,10 +82,22 @@ The following part shows how such an configuration entry looks in detail.
 All implemented Event Monitor Configurations have the same structure.
 As example the configuration of the Program Counter will be shown.
 
- ||  15  ||  14  ||  13  ||  12  ||  11  ||  10  ||   9  ||   8  ||   7  ||   6  ||   5  ||   4  ||   3  ||   2  ||   1  ||   0  ||
- ||------||------||------||------||------||------||------||------||------||----- ||------||------||------||------||------||------||
- || Program Counter Value LSB                                                                                                    ||
- ||------------------------------------------------------------------------------------------------------------------------------||
+
+| Header      | Another header     |
+|-------------|--------------------|
+| short line  | very long line }_  |
+| additiona}_ | they even may b }_ |
+{ very long line can be continued right under the table }
+{ additional lines are listed in order they appear in table (rtl, ttb) }
+{ they even may be multilined
+as this line }
+
+
+
+   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0  
+ ---------------------------------------------------------------------------------------------------------------
+   Program Counter Value LSB                                                                                                    
+ ------------------------------------------------------------------------------------------------------------------------------
 
 
 
