@@ -2,7 +2,7 @@
 
 This document specifies the implementation of the *CPU Debug Unit*. The CPU Debug Unit contains some Event Monitors, Snapshot Collectors, one Snapshot Data Correlation Module (SDCM) and one Packetizer.
 
-The event monitor detects certain events and informs the SDCM about their occurrences. At the moment three different event monitors are implemented: the Program Counter Monitor, the Function Return Monitor and the Memory Address Monitor. The Program Counter Monitor compares the current value of the Program Counter with pre-defined events. If there is a match the module informs the SDCM.
+The Event Monitor detects certain events and informs the SDCM about their occurrences. At the moment three different Event Monitors are implemented: the Program Counter Monitor, the Function Return Monitor and the Memory Address Monitor. The Program Counter Monitor compares the current value of the Program Counter with pre-defined events. If there is a match the module informs the SDCM.
 The Function Return Monitor detects the return of a certain function by means of the program counter and the return address which is stored in the CPU registers when the function is called. The Memory Address Monitor observes the memory writes of the CPU and compares it to the preconfigured memory address singal values. Similar to the other monitors this module forwards an event signal in case of a match.
 
 When an event occurs the SDCM gets informed by the event monitors. Depending on the event configuration the SDCM is responsible to trigger the Snapshot Collectors in order to collect the requested data.
@@ -36,10 +36,10 @@ There is a generic interface between the CPU Debug Unit and the system:
 
  Signal             | Direction              | Description
  -------------------| -----------------------| -----------
- `memaddr_val`      | System->CPU Debug Unit | Memory Interface (of Memory Address Monitor), address valid
+ `memaddr_val`      | System->CPU Debug Unit | Memory Interface (of Memory Address Monitor), address value (32 bit)
  `sram_ce`          | System->CPU Debug Unit | Memory Inferface (of Memory Address Monitor), chip enable
  `sram_we`          | System->CPU Debug Unit | Memory Interface (of Memory Address Monitor), write enable
- `pc_val`	    | System->CPU Debug Unit | Program Counter Interface (of Program Counter Monitor), Program Counter valid
+ `pc_val`	    | System->CPU Debug Unit | Program Counter Interface (of Program Counter Monitor), Program Counter value (32 bit)
  `pc_enable`        | System->CPU Debug Unit | Program Counter Interface (of Program Counter Monitor), Program Counter enable
  `wb_enable`        | System->CPU Debug Unit | Writeback Register Interface (of Function Return Monitor), writeback enable
  `wb_reg`           | System->CPU Debug Unit | Writeback Register Interface (of Function Return Monitor), writeback register
@@ -74,13 +74,13 @@ The structure of the registers is described below:
 	 | `SDC Module LUT_element_1 1/3`   | SDC Module Configuration Program Counter Event 1 Part 1
 	 | `..`				    |
 
-Three flits will be used for one configuration entry. The structure depends on the implemented event monitors and the maximum amount of events per monitor. Firstly, all event configurations for the event monitors have to be stored. Afterwards the SDCM configuration of the events have to be described. The SDCM configuration will be used to inform the snapshot collectors which data they should be selected in case the event occurs.
+Three flits will be used for one configuration entry. The structure depends on the implemented event monitors and the maximum amount of events per monitor. Firstly, all event configurations for the event monitors have to be stored. Afterwards the SDCM configuration of the events have to be described. The SDCM configuration will be used to inform the snapshot collectors which data should be selected in case an event occurs.
 
 The following part shows how such an configuration entry looks in detail.
 
-*Event Monitor Configuration*:
+**Event Monitor Configuration:**
 All implemented Event Monitor Configurations have the same structure.
-As example the configuration of the Program Counter will be shown.
+As example the configuration of the Program Counter will be illustrated.
 
 <table>
   <tr>
@@ -156,7 +156,8 @@ As example the configuration of the Program Counter will be shown.
   </tr>
 </table>
 
-*SDCM Configuration*:
+
+**SDCM Configuration**:
 
 <table>
   <tr>
@@ -233,13 +234,13 @@ As example the configuration of the Program Counter will be shown.
   </tr>
 </table>
 
-The General Purpose Registers can be selected with the 32 bit vector. Each bit indicates the selection of one register. If bit 'n' is set to 1 then Rn gets selected.
-With the six bits for the stack arguments the number of word lines can be selected.
+The General Purpose Registers can be selected with the 32 bit vector. Each bit indicates the selection of one register. If bit 'n' is set to logic one the register Rn gets selected.
+With the six bits for the stack arguments the number of word lines can be chosen.
 
 # Trace Packets
 
 The trace packets were sent over the Debug NoC to the host.
-The sequence starts with a common header:
+The sequence starts with a common header and ends with the tail:
 
  Type     | Content       						      | Remark
  -------  | -------							      | ------
