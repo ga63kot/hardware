@@ -82,61 +82,156 @@ The following part shows how such an configuration entry looks in detail.
 All implemented Event Monitor Configurations have the same structure.
 As example the configuration of the Program Counter will be shown.
 
-
 <table>
   <tr>
-    <td>0</td>
-    <td>1</td>
-    <td>2</td>
-    <td>3</td>
-    <td>4</td>
-    <td>5</td>
-    <td>6</td>
-    <td>7</td>
-    <td>8</td>
-    <td>9</td>
-    <td>10</td>
-    <td>11</td>
-    <td>12</td>
-    <td>13</td>
-    <td>14</td>
     <td>15</td>
+    <td>14</td>
+    <td>13</td>
+    <td>12</td>
+    <td>11</td>
+    <td>10</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>2</td>
+    <td>1</td>
+    <td>0</td>
   </tr>
   <tr>
     <td colspan="16">Program Counter Value LSB</td>
   </tr>
 </table>
 
+<table>
+  <tr>
+    <td>15</td>
+    <td>14</td>
+    <td>13</td>
+    <td>12</td>
+    <td>11</td>
+    <td>10</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>2</td>
+    <td>1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td colspan="16">Program Counter Value MSB</td>
+  </tr>
+</table>
 
-
-   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0  
- ---------------------------------------------------------------------------------------------------------------
-   Program Counter Value LSB                                                                                                    
- ------------------------------------------------------------------------------------------------------------------------------
-
-
-
-   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0
- ----------
- Program Counter Value MSB
-
-   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0
- -------------------------------------------------------------------------------------------------------------
- valid | undefined                                                    | Event ID
+<table>
+  <tr>
+    <td>15</td>
+    <td>14</td>
+    <td>13</td>
+    <td>12</td>
+    <td>11</td>
+    <td>10</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>2</td>
+    <td>1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td>valid</td>
+    <td colspan="9">undefined</td>
+    <td colspan="6">Event ID</td>
+  </tr>
+</table>
 
 *SDCM Configuration*:
 
-   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0
- -------------------------------------------------------------------------------------------------------------
- GPR selection vector (LSB)
+<table>
+  <tr>
+    <td>15</td>
+    <td>14</td>
+    <td>13</td>
+    <td>12</td>
+    <td>11</td>
+    <td>10</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>2</td>
+    <td>1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td colspan="16">GPR selection vector (LSB)</td>
+  </tr>
+</table>
 
-   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0
- -------------------------------------------------------------------------------------------------------------
- GPR selection vector (MSB)
+<table>
+  <tr>
+    <td>15</td>
+    <td>14</td>
+    <td>13</td>
+    <td>12</td>
+    <td>11</td>
+    <td>10</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>2</td>
+    <td>1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td colspan="16">GPR selection vector (MSB)</td>
+  </tr>
+</table>
 
-   15  |  14  |  13  |  12  |  11  |  10  |   9  |   8  |   7  |   6  |   5  |   4  |   3  |   2  |   1  |   0
- -------------------------------------------------------------------------------------------------------------
- valid | undefined          | stack arguments                         | Event ID
+<table>
+  <tr>
+    <td>15</td>
+    <td>14</td>
+    <td>13</td>
+    <td>12</td>
+    <td>11</td>
+    <td>10</td>
+    <td>9</td>
+    <td>8</td>
+    <td>7</td>
+    <td>6</td>
+    <td>5</td>
+    <td>4</td>
+    <td>3</td>
+    <td>2</td>
+    <td>1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td>valid</td>
+    <td colspan="3">undefined</td>
+    <td colspan="6">stack arguments</td>
+    <td colspan="6">Event ID</td>
+  </tr>
+</table>
 
 The General Purpose Registers can be selected with the 32 bit vector. Each bit indicates the selection of one register. If bit 'n' is set to 1 then Rn gets selected.
 With the six bits for the stack arguments the number of word lines can be selected.
