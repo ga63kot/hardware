@@ -83,10 +83,15 @@ All implemented Event Monitor Configurations have the same structure.
 As example the configuration of the Program Counter will be shown.
 
 
-| Header      | Another header     |
-|-------------|--------------------|
-| additiona}_   they even may b }_ |
-|----------------------------------|
+|             |          Grouping           ||
+First Header  | Second Header | Third Header |
+ ------------ | :-----------: | -----------: |
+Content       |          *Long Cell*        ||
+Content       |   **Cell**    |         Cell |
+
+New section   |     More      |         Data |
+And more      | With an escaped '\|'         ||  
+[Prototype table]
 
 
 
