@@ -251,6 +251,6 @@ The sequence starts with a common header and ends with the tail:
  Content  | `[15:0]`: GPR DATA LSB
  Content  | `[15:0]`: GPR DATA MSB
  ..       | ..
- Content  | `[15:0]`:STACKARG DATA LSB
- Content  | `[15:0]`:STACKARG DATA MSB
+ Content  | `[15:0]`: STACKARG DATA LSB
+ Content  | `[15:0]`: STACKARG DATA MSB
  Tail     | `[15:0]`: Address
