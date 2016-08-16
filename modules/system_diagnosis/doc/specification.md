@@ -85,12 +85,8 @@ As example the configuration of the Program Counter will be shown.
 
 | Header      | Another header     |
 |-------------|--------------------|
-| short line  | very long line }_  |
-| additiona}_ | they even may b }_ |
-{ very long line can be continued right under the table }
-{ additional lines are listed in order they appear in table (rtl, ttb) }
-{ they even may be multilined
-as this line }
+| additiona}_   they even may b }_ |
+
 
 
 
