@@ -84,7 +84,7 @@ As example the configuration of the Program Counter will be shown.
 
 
 | Header      | Another header     |
-|-------------|--------------------|
+|----------------------------------|
 | additiona}_   they even may b }_ |
 
 
