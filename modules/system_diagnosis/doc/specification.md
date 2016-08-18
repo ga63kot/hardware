@@ -63,18 +63,18 @@ The structure of the registers is described below:
 
  Index   | Content                          | Remark
  ------- | -------                          | ------
- 0x210   | `ON/OFF`			    | Bit 0 is used for ON/OFF
- 0x211   | `PC Config Event_1 1/3`	    | Monitor Configuration Program Counter Event 1 Part 1
- 0x212   | `PC Config Event_1 2/3`	    | Monitor Configuration Program Counter Event 1 Part 2
- 0x213   | `PC Config Event_1 3/3`	    | Monitor Configuration Program Counter Event 1 Part 3
- 0x214   | `PC Config Event_2 1/3`	    | Monitor Configuration Program Counter Event 2 Part 1
+ 0x200   | `ON/OFF`			    | Bit 0 is used for ON/OFF
+ 0x201   | `PC Config Event_1 1/3`	    | Monitor Configuration Program Counter Event 1 Part 1
+ 0x202   | `PC Config Event_1 2/3`	    | Monitor Configuration Program Counter Event 1 Part 2
+ 0x203   | `PC Config Event_1 3/3`	    | Monitor Configuration Program Counter Event 1 Part 3
+ 0x204   | `PC Config Event_2 1/3`	    | Monitor Configuration Program Counter Event 2 Part 1
  ..      | `..`				    |
          | `Fcn Return Config Event_1 1/3`  | Monitor Configuration Function Return Event 1 Part 1
          | `..`				    |
 	 | `SDC Module LUT_element_1 1/3`   | SDC Module Configuration Program Counter Event 1 Part 1
 	 | `..`				    |
 
-Three flits will be used for one configuration entry. The structure depends on the implemented event monitors and the maximum amount of events per monitor. Firstly, all event configurations for the event monitors have to be stored. Afterwards the SDCM configuration of the events have to be described. The SDCM configuration will be used to inform the snapshot collectors which data should be selected in case an event occurs.
+Three flits will be used for one configuration entry. Therefore, each entry has three parts. The structure depends on the implemented event monitors and the maximum amount of events per monitor. Firstly, all event configurations for the event monitors have to be stored. Afterwards the SDCM configuration of the events have to be described. The SDCM configuration will be used to inform the snapshot collectors which data should be selected in case an event occurs.
 
 The following part shows how such an configuration entry looks in detail.
 
@@ -82,6 +82,7 @@ The following part shows how such an configuration entry looks in detail.
 All implemented Event Monitor Configurations have the same structure.
 As example the configuration of the Program Counter will be illustrated.
 
+<u>Part 1</u>
 <table>
   <tr>
     <td>15</td>
@@ -106,6 +107,7 @@ As example the configuration of the Program Counter will be illustrated.
   </tr>
 </table>
 
+<u>Part 2</u>
 <table>
   <tr>
     <td>15</td>
@@ -130,6 +132,7 @@ As example the configuration of the Program Counter will be illustrated.
   </tr>
 </table>
 
+<u>Part 3</u>
 <table>
   <tr>
     <td>15</td>
@@ -159,6 +162,7 @@ As example the configuration of the Program Counter will be illustrated.
 
 **SDCM Configuration**:
 
+<u>Part 1</u>
 <table>
   <tr>
     <td>15</td>
@@ -183,6 +187,7 @@ As example the configuration of the Program Counter will be illustrated.
   </tr>
 </table>
 
+<u>Part 2</u>
 <table>
   <tr>
     <td>15</td>
@@ -207,6 +212,7 @@ As example the configuration of the Program Counter will be illustrated.
   </tr>
 </table>
 
+<u>Part 3</u>
 <table>
   <tr>
     <td>15</td>
