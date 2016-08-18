@@ -82,7 +82,7 @@ The following part shows how such an configuration entry looks in detail.
 All implemented Event Monitor Configurations have the same structure.
 As example the configuration of the Program Counter will be illustrated.
 
-<u>Part 1</u>
+<u>Part 1:</u>
 <table>
   <tr>
     <td>15</td>
@@ -107,7 +107,7 @@ As example the configuration of the Program Counter will be illustrated.
   </tr>
 </table>
 
-<u>Part 2</u>
+<u>Part 2:</u>
 <table>
   <tr>
     <td>15</td>
@@ -132,7 +132,7 @@ As example the configuration of the Program Counter will be illustrated.
   </tr>
 </table>
 
-<u>Part 3</u>
+<u>Part 3:</u>
 <table>
   <tr>
     <td>15</td>
@@ -162,7 +162,7 @@ As example the configuration of the Program Counter will be illustrated.
 
 **SDCM Configuration**:
 
-<u>Part 1</u>
+<u>Part 1:</u>
 <table>
   <tr>
     <td>15</td>
@@ -187,7 +187,7 @@ As example the configuration of the Program Counter will be illustrated.
   </tr>
 </table>
 
-<u>Part 2</u>
+<u>Part 2:</u>
 <table>
   <tr>
     <td>15</td>
@@ -212,7 +212,7 @@ As example the configuration of the Program Counter will be illustrated.
   </tr>
 </table>
 
-<u>Part 3</u>
+<u>Part 3:</u>
 <table>
   <tr>
     <td>15</td>
